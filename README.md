@@ -1,17 +1,4 @@
 
-### Requirements
+# "Chat" (frontend-project-lvl4)
 
-* [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
-
-### Install
-
-```sh
-$ make install
-```
-
-### Run
-
-```sh
-$ make start
-# open http://localhost:5000
-```
+[Link to live project](https://young-bayou-43167.herokuapp.com/)
