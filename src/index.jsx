@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import Channels from './components/Channels.jsx';
 import Messages from './components/Messages.jsx';
 import UserContext from './Context.js';
+import ModalRoot from './components/modals/ModalRoot.jsx';
 
 const renderDom = (store, userName) => {
   render(
@@ -13,6 +14,7 @@ const renderDom = (store, userName) => {
           <UserContext.Provider value={userName}>
             <Channels />
             <Messages />
+            <ModalRoot />
           </UserContext.Provider>
         </Provider>
       </div>

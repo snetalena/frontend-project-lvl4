@@ -2,19 +2,19 @@ import axios from 'axios';
 import React, { useContext } from 'react';
 import { connect } from 'react-redux';
 import { Formik } from 'formik';
+import _ from 'lodash';
 import UserContext from '../Context.js';
 import routes from '../routes.js';
 
 const mapStateToProps = (state) => {
-  console.log('! state mapStateToProps ', state);
   const { currentChannelId } = state.channels;
-  return { currentChannelId };
+  const err = state.errors;
+  // console.log('! err mapStateToProps ', err);
+  return { currentChannelId, errors: err };
 };
 
 const NewMessageForm = (props) => {
   const userName = useContext(UserContext);
-  console.log('userName ', userName);
-  console.log('props ', props);
 
   const handlerOnSubmit = (event, { resetForm, setErrors }) => {
     axios.post(routes.channelMessagesPath(props.currentChannelId), {
@@ -41,7 +41,9 @@ const NewMessageForm = (props) => {
     //   errors,
     // } = formikProps;
 
-    console.log('formikProps.errors ', formikProps.errors);
+    const { errors } = props;
+    // console.log('errors ', errors);
+    // console.log('formikProps.errors ', formikProps.errors);
 
     return (
       <form onSubmit={formikProps.handleSubmit}>
@@ -57,7 +59,7 @@ const NewMessageForm = (props) => {
           className="form-control"
         />
         <div className="d-block invalid-feedback">
-          {formikProps.errors.text && (<div className="input-feedback text-danger">{formikProps.errors.text}</div>)}
+          {!_.isEqual(errors, {}) && (<div className="input-feedback text-danger">{errors.message}</div>)}
         </div>
       </form>
     );
@@ -70,6 +72,9 @@ const NewMessageForm = (props) => {
       </Formik>
     </div>
   );
+
+  // eslint-disable-next-line max-len
+  // {formikProps.errors.text && (<div className="input-feedback text-danger">{formikProps.errors.text}</div>)}
 };
 
 export default connect(mapStateToProps)(NewMessageForm);

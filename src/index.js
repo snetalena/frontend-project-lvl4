@@ -16,7 +16,6 @@ import reducers from './reducers/index.js';
 import * as actions from './actions/index.js';
 import renderDom from './index.jsx';
 
-
 if (process.env.NODE_ENV !== 'production') {
   localStorage.debug = 'chat:*';
 }
@@ -49,5 +48,8 @@ socket.on('newMessage', (message) => {
   const { data } = message;
   store.dispatch(actions.addMessageToState(data));
 });
+socket.on('newChannel', (channel) => store.dispatch(actions.addChannelSuccess(channel)));
+socket.on('removeChannel', (channel) => store.dispatch(actions.removeChannelSuccess(channel)));
+socket.on('renameChannel', (channel) => store.dispatch(actions.renameChannelSuccess(channel)));
 
 renderDom(store, userName);
