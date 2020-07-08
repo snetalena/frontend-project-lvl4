@@ -3,26 +3,22 @@ import { connect } from 'react-redux';
 import NewMessageForm from './NewMessageForm.jsx';
 
 const mapStateToProps = (state) => {
-  // console.log('messages mapStateToProps state = ', state);
+  console.log('messages mapStateToProps state = ', state);
   const { currentChannelId } = state.channels;
   const messages = state.messages.filter((message) => message.channelId === currentChannelId);
   return { messages, currentChannelId };
 };
 
 class Messages extends React.Component {
-  renderMessage = (message) => {
-    return (
-      <div key={message.id}>
-        <b>{message.userName}</b>
-        :
-        {` ${message.text}`}
-      </div>
-    );
-  }
+  renderMessage = (message) => (
+    <div key={message.id}>
+      <b>{message.userName}</b>
+      :
+      {` ${message.text}`}
+    </div>
+  )
 
   render() {
-    // console.log('messages props ', this.props);
-    // console.log('messages context ', this.context);
     const { messages } = this.props;
 
     return (

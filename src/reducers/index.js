@@ -47,7 +47,7 @@ const messages = handleActions({
   [actions.initState](state, { payload }) {
     return payload.messages;
   },
-  [actions.addMessageToState](state, { payload: { attributes } }) {
+  [actions.addMessageSuccess](state, { payload: { attributes } }) {
     return [...state, attributes];
   },
 }, []);
@@ -62,14 +62,21 @@ const modals = handleActions({
 }, {});
 
 const errors = handleActions({
-  [actions.addChannelFailure]() {
-    return { message: 'Adding channel error! Please, try do it later' };
+  [actions.addChannelFailure](state, { payload: { error } }) {
+    return { error, message: 'Adding channel error' };
   },
-  [actions.removeChannelFailure]() {
-    return { message: 'Removing channel error! Please, try do it later' };
+  [actions.removeChannelFailure](state, { payload: { error } }) {
+    return { error, message: 'Removing channel error' };
   },
-  [actions.renameChannelFailure]() {
-    return { message: 'Renaming channel error! Please, try do it later' };
+  [actions.renameChannelFailure](state, { payload: { error } }) {
+    return { error, message: 'Renaming channel error' };
+  },
+  [actions.addMessageFailure](state, { payload: { error } }) {
+    console.log('payload error ', error);
+    return { error, message: 'Sending message error' };
+  },
+  [actions.cleanErrors]() {
+    return {};
   },
 }, {});
 

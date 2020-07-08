@@ -1,66 +1,68 @@
-import axios from 'axios';
 import React, { useContext } from 'react';
 import { connect } from 'react-redux';
 import { Formik } from 'formik';
 import _ from 'lodash';
+import { FormGroup, FormControl, Alert } from 'react-bootstrap';
 import UserContext from '../Context.js';
-import routes from '../routes.js';
+import * as actions from '../actions';
+
+const actionCreators = {
+  addMessage: actions.addMessage,
+  cleanErrors: actions.cleanErrors,
+};
 
 const mapStateToProps = (state) => {
   const { currentChannelId } = state.channels;
-  const err = state.errors;
+  const { errors } = state;
   // console.log('! err mapStateToProps ', err);
-  return { currentChannelId, errors: err };
+  return { currentChannelId, errors };
 };
 
 const NewMessageForm = (props) => {
   const userName = useContext(UserContext);
+  const {
+    errors,
+    currentChannelId,
+    addMessage,
+    cleanErrors,
+  } = props;
 
-  const handlerOnSubmit = (event, { resetForm, setErrors }) => {
-    axios.post(routes.channelMessagesPath(props.currentChannelId), {
-      data: {
-        attributes: {
-          text: event.text,
-          userName,
-        },
-      },
-    })
-      .then(() => resetForm({}))
-      .catch((error) => {
-        console.log('error ', error);
-        return setErrors({ text: error });
-      });
+  const handlerOnSubmit = (values, { resetForm, setSubmitting }) => {
+    addMessage(currentChannelId, values.text, userName);
+    setSubmitting(false);
+    resetForm();
   };
 
   const formik = (formikProps) => {
-    // const {
-    //   values,
-    //   isSubmitting,
-    //   handleChange,
-    //   handleSubmit,
-    //   errors,
-    // } = formikProps;
-
-    const { errors } = props;
-    // console.log('errors ', errors);
-    // console.log('formikProps.errors ', formikProps.errors);
+    const renderError = () => {
+      if (_.isEqual(errors, {})) {
+        return null;
+      }
+      const errorDescription = `${errors.error}. Please, try do it later!`;
+      return (
+        <Alert variant="danger" onClose={() => cleanErrors()} dismissible>
+          <Alert.Heading>{errors.message}</Alert.Heading>
+          <p>
+            {errorDescription}
+          </p>
+        </Alert>
+      );
+    };
 
     return (
       <form onSubmit={formikProps.handleSubmit}>
-        <input
-          type="text"
-          onChange={formikProps.handleChange}
-          onBlur={formikProps.handleBlur}
-          value={formikProps.values.text}
-          id="text"
-          required
-          disabled={formikProps.isSubmitting}
-          placeholder="Input a new message"
-          className="form-control"
-        />
-        <div className="d-block invalid-feedback">
-          {!_.isEqual(errors, {}) && (<div className="input-feedback text-danger">{errors.message}</div>)}
-        </div>
+        {renderError()}
+        <FormGroup>
+          <FormControl
+            required
+            type="text"
+            name="text"
+            onChange={formikProps.handleChange}
+            disabled={formikProps.isSubmitting}
+            placeholder="Input a new message"
+            value={formikProps.values.text}
+          />
+        </FormGroup>
       </form>
     );
   };
@@ -72,9 +74,6 @@ const NewMessageForm = (props) => {
       </Formik>
     </div>
   );
-
-  // eslint-disable-next-line max-len
-  // {formikProps.errors.text && (<div className="input-feedback text-danger">{formikProps.errors.text}</div>)}
 };
 
-export default connect(mapStateToProps)(NewMessageForm);
+export default connect(mapStateToProps, actionCreators)(NewMessageForm);

@@ -1,5 +1,3 @@
-// @ts-check
-
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
@@ -11,7 +9,6 @@ import thunk from 'redux-thunk';
 import cookies from 'js-cookie';
 import io from 'socket.io-client';
 import { createStore, applyMiddleware, compose } from 'redux';
-// import React from 'react';
 import reducers from './reducers/index.js';
 import * as actions from './actions/index.js';
 import renderDom from './index.jsx';
@@ -46,7 +43,8 @@ cookies.set('userName', userName);
 
 socket.on('newMessage', (message) => {
   const { data } = message;
-  store.dispatch(actions.addMessageToState(data));
+  console.log('newMessage ', message);
+  store.dispatch(actions.addMessageSuccess(data));
 });
 socket.on('newChannel', (channel) => store.dispatch(actions.addChannelSuccess(channel)));
 socket.on('removeChannel', (channel) => store.dispatch(actions.removeChannelSuccess(channel)));

@@ -7,7 +7,7 @@ import * as actions from '../actions';
 
 
 const mapStateToProps = (state) => {
-  console.log('Channels state mapStateToProps ', state);
+  // console.log('Channels state mapStateToProps ', state);
   const { byId, allIds, currentChannelId } = state.channels;
   const channels = allIds.map((id) => byId[id]);
   return { channels, currentChannelId };
@@ -30,34 +30,41 @@ class Channels extends React.Component {
     openModal({ modalType, modalData });
   }
 
+  renderChannelIcons = (channel, channelActivity) => {
+    if (!channelActivity) {
+      return null;
+    }
+    return (
+      <div className="float-right align-middle">
+        <Pencil onClick={this.handleOpenModal('RENAME_CHANNEL', channel)} className="ml-1" />
+        {channel.removable
+          ? <Trash onClick={this.handleOpenModal('REMOVE_CHANNEL', channel)} className="ml-2" />
+          : null}
+      </div>
+    );
+  }
+
   renderChannel = (channel) => {
     const { currentChannelId } = this.props;
+    const channelActivity = currentChannelId === channel.id;
     const btnChannelClasses = cn({
       'nav-link btn btn-block': true,
-      active: currentChannelId === channel.id,
+      active: channelActivity,
     });
 
     return (
       <Nav.Item key={channel.id} as="li">
         <button onClick={this.handleOnClickChannel(channel.id)} className={btnChannelClasses} type="button">
           <div className="float-left">{channel.name}</div>
-          <div className="float-right align-middle">
-            <Pencil onClick={this.handleOpenModal('RENAME_CHANNEL', channel)} className="ml-1" />
-            {channel.removable
-              ? <Trash onClick={this.handleOpenModal('REMOVE_CHANNEL', channel)} className="ml-2" />
-              : null}
-          </div>
+          {this.renderChannelIcons(channel, channelActivity)}
         </button>
       </Nav.Item>
     );
   }
 
   render() {
-    console.log('Channels render props ', this.props);
+    // console.log('Channels render props ', this.props);
     const { channels } = this.props;
-    // if (channels.length === 0) {
-    //   return null;
-    // }
     return (
       <div className="col-3 border-right">
         <div className="d-flex mb-2">
