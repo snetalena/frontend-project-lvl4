@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import {
   Modal, FormGroup, FormControl, Button,
 } from 'react-bootstrap';
@@ -7,21 +6,16 @@ import { useFormik } from 'formik';
 
 const RenameChannel = (props) => {
   const { modalProps: { renameChannel, closeModal, modalData } } = props;
-
   const handleOnSubmit = (values, { setSubmitting, resetForm }) => {
     renameChannel(modalData.id, values);
     setSubmitting(false);
     resetForm();
     closeModal();
   };
-
   const formik = useFormik({
-    initialValues: {
-      name: modalData.name,
-    },
+    initialValues: { name: modalData.name },
     onSubmit: handleOnSubmit,
   });
-
   return (
     <Modal show onHide={closeModal} centered>
       <Modal.Header closeButton>
@@ -48,4 +42,4 @@ const RenameChannel = (props) => {
   );
 };
 
-export default connect()(RenameChannel);
+export default RenameChannel;

@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import {
   Modal, FormGroup, FormControl, Button,
 } from 'react-bootstrap';
@@ -7,21 +6,16 @@ import { useFormik } from 'formik';
 
 const AddChannel = (props) => {
   const { modalProps: { addChannel, closeModal } } = props;
-
   const handleOnSubmit = (values, { setSubmitting, resetForm }) => {
     addChannel(values);
     setSubmitting(false);
     resetForm();
     closeModal();
   };
-
   const formik = useFormik({
-    initialValues: {
-      name: '',
-    },
+    initialValues: { name: '' },
     onSubmit: handleOnSubmit,
   });
-
   return (
     <Modal show onHide={closeModal} centered>
       <Modal.Header closeButton>
@@ -48,4 +42,4 @@ const AddChannel = (props) => {
   );
 };
 
-export default connect()(AddChannel);
+export default AddChannel;
