@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import NewMessageForm from './NewMessageForm.jsx';
 
 const mapStateToProps = (state) => {
-  console.log('messages mapStateToProps state = ', state);
   const { currentChannelId } = state.channels;
   const messages = state.messages.filter((message) => message.channelId === currentChannelId);
   return { messages, currentChannelId };

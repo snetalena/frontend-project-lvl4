@@ -4,18 +4,12 @@ import {
   Modal, FormGroup, FormControl, Button,
 } from 'react-bootstrap';
 import { useFormik } from 'formik';
-import * as actions from '../../actions';
-
-const actionCreators = {
-  renameChannel: actions.renameChannel,
-  closeModal: actions.closeModal,
-};
 
 const RenameChannel = (props) => {
-  const { renameChannel, closeModal, modalProps } = props;
+  const { modalProps: { renameChannel, closeModal, modalData } } = props;
 
   const handleOnSubmit = (values, { setSubmitting, resetForm }) => {
-    renameChannel(modalProps.id, values);
+    renameChannel(modalData.id, values);
     setSubmitting(false);
     resetForm();
     closeModal();
@@ -23,7 +17,7 @@ const RenameChannel = (props) => {
 
   const formik = useFormik({
     initialValues: {
-      name: modalProps.name,
+      name: modalData.name,
     },
     onSubmit: handleOnSubmit,
   });
@@ -54,4 +48,4 @@ const RenameChannel = (props) => {
   );
 };
 
-export default connect(null, actionCreators)(RenameChannel);
+export default connect()(RenameChannel);

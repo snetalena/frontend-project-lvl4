@@ -4,15 +4,9 @@ import {
   Modal, FormGroup, FormControl, Button,
 } from 'react-bootstrap';
 import { useFormik } from 'formik';
-import * as actions from '../../actions';
 
-const actionCreators = {
-  addChannel: actions.addChannel,
-  closeModal: actions.closeModal,
-};
-
-const AddChannel = (modalProps) => {
-  const { addChannel, closeModal } = modalProps;
+const AddChannel = (props) => {
+  const { modalProps: { addChannel, closeModal } } = props;
 
   const handleOnSubmit = (values, { setSubmitting, resetForm }) => {
     addChannel(values);
@@ -54,4 +48,4 @@ const AddChannel = (modalProps) => {
   );
 };
 
-export default connect(null, actionCreators)(AddChannel);
+export default connect()(AddChannel);

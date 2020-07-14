@@ -3,19 +3,18 @@ import { connect } from 'react-redux';
 import cn from 'classnames';
 import { Trash, Pencil, PlusSquare } from 'react-bootstrap-icons';
 import { Nav } from 'react-bootstrap';
-import * as actions from '../actions';
+import { channelsActions, modalActions } from '../slices';
 
 
 const mapStateToProps = (state) => {
-  // console.log('Channels state mapStateToProps ', state);
   const { byId, allIds, currentChannelId } = state.channels;
   const channels = allIds.map((id) => byId[id]);
   return { channels, currentChannelId };
 };
 
 const actionCreators = {
-  selectActiveChannel: actions.selectActiveChannel,
-  openModal: actions.openModal,
+  selectActiveChannel: channelsActions.selectActiveChannel,
+  openModal: modalActions.openModal,
 };
 
 class Channels extends React.Component {
@@ -63,7 +62,6 @@ class Channels extends React.Component {
   }
 
   render() {
-    // console.log('Channels render props ', this.props);
     const { channels } = this.props;
     return (
       <div className="col-3 border-right">

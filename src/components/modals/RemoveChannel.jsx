@@ -1,16 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Modal, Button } from 'react-bootstrap';
-import * as actions from '../../actions';
-
-const actionCreators = {
-  removeChannel: actions.removeChannel,
-  closeModal: actions.closeModal,
-};
 
 const RemoveChannel = (props) => {
-  console.log('RemoveChannel modalProps', props);
-  const { removeChannel, closeModal, modalProps } = props;
+  const { modalProps: { removeChannel, closeModal, modalData } } = props;
 
   const handleOnRemoveChannel = (id) => (e) => {
     e.preventDefault();
@@ -18,7 +11,7 @@ const RemoveChannel = (props) => {
     closeModal();
   };
 
-  const { id, name } = modalProps;
+  const { id, name } = modalData;
   const question = `Delete channel: ${name}?`;
 
   return (
@@ -34,4 +27,4 @@ const RemoveChannel = (props) => {
   );
 };
 
-export default connect(null, actionCreators)(RemoveChannel);
+export default connect()(RemoveChannel);

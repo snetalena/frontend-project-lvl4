@@ -5,13 +5,11 @@ import '../assets/application.scss';
 import faker from 'faker';
 // @ts-ignore
 import gon from 'gon';
-import thunk from 'redux-thunk';
 import cookies from 'js-cookie';
 import io from 'socket.io-client';
-import { createStore, applyMiddleware, compose } from 'redux';
-import reducers from './reducers/index.js';
-import * as actions from './actions/index.js';
+import { configureStore } from '@reduxjs/toolkit';
 import renderDom from './index.jsx';
+import reducer, { channelsActions, messagesActions } from './slices';
 
 if (process.env.NODE_ENV !== 'production') {
   localStorage.debug = 'chat:*';
@@ -20,22 +18,11 @@ if (process.env.NODE_ENV !== 'production') {
 console.log('it works!');
 console.log('gon ', gon);
 
-/* eslint-disable no-underscore-dangle */
-// @ts-ignore
-const ext = window.__REDUX_DEVTOOLS_EXTENSION__;
-const devtoolMiddleware = ext && ext();
-/* eslint-enable */
+const store = configureStore({
+  reducer,
+});
 
-const store = createStore(
-  reducers,
-  compose(
-    applyMiddleware(thunk),
-    devtoolMiddleware,
-  ),
-);
-
-// store.dispatch(actions.getChannelsData(gon.channels));
-store.dispatch(actions.initState(gon));
+store.dispatch(channelsActions.initState(gon));
 
 const socket = io();
 const userName = faker.fake('{{name.lastName}} {{name.firstName}}');
@@ -43,11 +30,10 @@ cookies.set('userName', userName);
 
 socket.on('newMessage', (message) => {
   const { data } = message;
-  console.log('newMessage ', message);
-  store.dispatch(actions.addMessageSuccess(data));
+  store.dispatch(messagesActions.addMessageSuccess(data));
 });
-socket.on('newChannel', (channel) => store.dispatch(actions.addChannelSuccess(channel)));
-socket.on('removeChannel', (channel) => store.dispatch(actions.removeChannelSuccess(channel)));
-socket.on('renameChannel', (channel) => store.dispatch(actions.renameChannelSuccess(channel)));
+socket.on('newChannel', (channel) => store.dispatch(channelsActions.addChannelSuccess(channel)));
+socket.on('removeChannel', (channel) => store.dispatch(channelsActions.removeChannelSuccess(channel)));
+socket.on('renameChannel', (channel) => store.dispatch(channelsActions.renameChannelSuccess(channel)));
 
 renderDom(store, userName);
