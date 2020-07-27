@@ -9,6 +9,7 @@ import { asyncMessagesActions, errorsActions } from '../slices';
 const actionCreators = {
   addMessage: asyncMessagesActions.addMessage,
   cleanError: errorsActions.cleanError,
+  addError: errorsActions.addError,
 };
 
 const mapStateToProps = (state) => {
@@ -24,12 +25,18 @@ const NewMessageForm = (props) => {
     currentChannelId,
     addMessage,
     cleanError,
+    addError,
   } = props;
 
-  const handlerOnSubmit = (values, { resetForm, setSubmitting }) => {
-    addMessage(currentChannelId, values.text, userName);
-    setSubmitting(false);
-    resetForm();
+  const handlerOnSubmit = async (values, { resetForm, setSubmitting }) => {
+    const messageData = { data: { attributes: { text: values.text, userName } } };
+    try {
+      await addMessage(messageData, currentChannelId);
+      setSubmitting(false);
+      resetForm();
+    } catch (error) {
+      addError(error.message);
+    }
   };
 
   const renderError = () => {

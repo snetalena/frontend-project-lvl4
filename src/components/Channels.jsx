@@ -7,8 +7,7 @@ import { channelsActions, modalActions } from '../slices';
 
 
 const mapStateToProps = (state) => {
-  const { byId, allIds, currentChannelId } = state.channels;
-  const channels = allIds.map((id) => byId[id]);
+  const { channels, currentChannelId } = state.channels;
   return { channels, currentChannelId };
 };
 

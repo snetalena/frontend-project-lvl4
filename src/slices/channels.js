@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
 import _ from 'lodash';
 import axios from 'axios';
@@ -6,34 +7,21 @@ import { actions as errorsActions } from './errors';
 
 const slice = createSlice({
   name: 'channels',
-  initialState: { byId: {}, allIds: [], currentChannelId: 1 },
+  initialState: { currentChannelId: 1, channels: [] },
   reducers: {
-    initState: (state, { payload }) => {
-      const byId = _.keyBy(payload.channels, 'id');
-      const allIds = payload.channels.map((channel) => channel.id);
-      const { currentChannelId } = payload;
-      return { byId, allIds, currentChannelId };
-    },
     selectActiveChannel: (state, { payload: { id } }) => (
       { ...state, currentChannelId: id }
     ),
     removeChannelSuccess: (state, { payload: { data: { id } } }) => {
-      const { byId, allIds } = state;
-      const newAllIds = allIds.filter((item) => item !== id);
-      const newById = _.omit(byId, [id]);
-      return { byId: newById, allIds: newAllIds, currentChannelId: 1 };
+      _.remove(state.channels, (channel) => channel.id === id);
+      state.currentChannelId = 1;
     },
     renameChannelSuccess: (state, { payload: { data: { attributes } } }) => {
-      const { byId } = state;
-      const newById = { ...byId, [attributes.id]: attributes };
-      return { ...state, byId: newById };
+      const renamedChannel = state.channels.find((channel) => channel.id === attributes.id);
+      renamedChannel.name = attributes.name;
     },
     addChannelSuccess: (state, { payload: { data: { attributes } } }) => {
-      const { byId, allIds } = state;
-      const addedChannelId = attributes.id;
-      const newById = { ...byId, [addedChannelId]: attributes };
-      const newAllIds = [...allIds, addedChannelId];
-      return { byId: newById, allIds: newAllIds, currentChannelId: addedChannelId };
+      state.channels.push(attributes);
     },
   },
 });
