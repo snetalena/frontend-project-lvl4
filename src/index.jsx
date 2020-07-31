@@ -14,7 +14,7 @@ import reducer, { channelsActions, messagesActions } from './slices';
 export default (gon) => {
   const preloadedState = {
     channels: {
-      channels: gon.channels,
+      channelsList: gon.channels,
       currentChannelId: gon.currentChannelId,
     },
     messages: gon.messages,
@@ -30,12 +30,18 @@ export default (gon) => {
   cookies.set('userName', userName);
 
   socket.on('newMessage', (message) => {
-    const { data } = message;
-    store.dispatch(messagesActions.addMessageSuccess(data));
+    const { data: { attributes } } = message;
+    store.dispatch(messagesActions.addMessageSuccess(attributes));
   });
-  socket.on('newChannel', (channel) => store.dispatch(channelsActions.addChannelSuccess(channel)));
-  socket.on('removeChannel', (channel) => store.dispatch(channelsActions.removeChannelSuccess(channel)));
-  socket.on('renameChannel', (channel) => store.dispatch(channelsActions.renameChannelSuccess(channel)));
+  socket.on('newChannel', (channel) => {
+    const { data: { attributes } } = channel;
+    store.dispatch(channelsActions.addChannelSuccess(attributes));
+  });
+  socket.on('removeChannel', (channel) => store.dispatch(channelsActions.removeChannelSuccess(channel.data)));
+  socket.on('renameChannel', (channel) => {
+    const { data: { attributes } } = channel;
+    store.dispatch(channelsActions.renameChannelSuccess(attributes));
+  });
 
   render(
     <div className="h-100" id="chat">

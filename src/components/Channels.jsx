@@ -1,49 +1,40 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import cn from 'classnames';
 import { Trash, Pencil, PlusSquare } from 'react-bootstrap-icons';
 import { Nav } from 'react-bootstrap';
 import { channelsActions, modalActions } from '../slices';
 
+const Channels = () => {
+  const channels = useSelector((state) => state.channels.channelsList);
+  const currentChannelId = useSelector((state) => state.channels.currentChannelId);
 
-const mapStateToProps = (state) => {
-  const { channels, currentChannelId } = state.channels;
-  return { channels, currentChannelId };
-};
+  const dispatch = useDispatch();
 
-const actionCreators = {
-  selectActiveChannel: channelsActions.selectActiveChannel,
-  openModal: modalActions.openModal,
-};
+  const handleOnClickChannel = (id) => () => {
+    dispatch(channelsActions.selectActiveChannel({ id }));
+  };
 
-class Channels extends React.Component {
-  handleOnClickChannel = (id) => () => {
-    const { selectActiveChannel } = this.props;
-    selectActiveChannel({ id });
-  }
-
-  handleOpenModal = (modalType, modalData = null) => (e) => {
+  const handleOpenModal = (modalType, modalData = null) => (e) => {
     e.preventDefault();
-    const { openModal } = this.props;
-    openModal({ modalType, modalData });
-  }
+    dispatch(modalActions.openModal({ modalType, modalData }));
+  };
 
-  renderChannelIcons = (channel, channelActivity) => {
+  const renderChannelIcons = (channel, channelActivity) => {
     if (!channelActivity) {
       return null;
     }
     return (
       <div className="float-right align-middle">
-        <Pencil onClick={this.handleOpenModal('RENAME_CHANNEL', channel)} className="ml-1" />
+        <Pencil onClick={handleOpenModal('RENAME_CHANNEL', channel)} className="ml-1" />
         {channel.removable
-          ? <Trash onClick={this.handleOpenModal('REMOVE_CHANNEL', channel)} className="ml-2" />
+          ? <Trash onClick={handleOpenModal('REMOVE_CHANNEL', channel)} className="ml-2" />
           : null}
       </div>
     );
-  }
+  };
 
-  renderChannel = (channel) => {
-    const { currentChannelId } = this.props;
+  const renderChannel = (channel) => {
     const channelActivity = currentChannelId === channel.id;
     const btnChannelClasses = cn({
       'nav-link btn btn-block': true,
@@ -52,30 +43,27 @@ class Channels extends React.Component {
 
     return (
       <Nav.Item key={channel.id} as="li">
-        <button onClick={this.handleOnClickChannel(channel.id)} className={btnChannelClasses} type="button">
+        <button onClick={handleOnClickChannel(channel.id)} className={btnChannelClasses} type="button">
           <div className="float-left">{channel.name}</div>
-          {this.renderChannelIcons(channel, channelActivity)}
+          {renderChannelIcons(channel, channelActivity)}
         </button>
       </Nav.Item>
     );
-  }
+  };
 
-  render() {
-    const { channels } = this.props;
-    return (
-      <div className="col-3 border-right">
-        <div className="d-flex mb-2">
-          <span>Channels</span>
-          <button type="button" className="btn btn-link p-0 ml-auto">
-            <PlusSquare onClick={this.handleOpenModal('ADD_CHANNEL')} className="ml-2 float-right align-middle" />
-          </button>
-        </div>
-        <Nav as="ul" className="flex-column nav-pills" variant="nav-fill">
-          {channels.map(this.renderChannel)}
-        </Nav>
+  return (
+    <div className="col-3 border-right">
+      <div className="d-flex mb-2">
+        <span>Channels</span>
+        <button type="button" className="btn btn-link p-0 ml-auto">
+          <PlusSquare onClick={handleOpenModal('ADD_CHANNEL')} className="ml-2 float-right align-middle" />
+        </button>
       </div>
-    );
-  }
-}
+      <Nav as="ul" className="flex-column nav-pills" variant="nav-fill">
+        {channels.map(renderChannel)}
+      </Nav>
+    </div>
+  );
+};
 
-export default connect(mapStateToProps, actionCreators)(Channels);
+export default Channels;

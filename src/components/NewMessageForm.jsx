@@ -1,41 +1,26 @@
 import React, { useContext } from 'react';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Formik } from 'formik';
 import _ from 'lodash';
 import { FormGroup, FormControl, Alert } from 'react-bootstrap';
 import UserContext from '../Context.js';
 import { asyncMessagesActions, errorsActions } from '../slices';
 
-const actionCreators = {
-  addMessage: asyncMessagesActions.addMessage,
-  cleanError: errorsActions.cleanError,
-  addError: errorsActions.addError,
-};
-
-const mapStateToProps = (state) => {
-  const { currentChannelId } = state.channels;
-  const { errors } = state;
-  return { currentChannelId, errors };
-};
-
-const NewMessageForm = (props) => {
+const NewMessageForm = () => {
   const userName = useContext(UserContext);
-  const {
-    errors,
-    currentChannelId,
-    addMessage,
-    cleanError,
-    addError,
-  } = props;
+  const currentChannelId = useSelector((state) => state.channels.currentChannelId);
+  const errors = useSelector((state) => state.errors);
+
+  const dispatch = useDispatch();
 
   const handlerOnSubmit = async (values, { resetForm, setSubmitting }) => {
     const messageData = { data: { attributes: { text: values.text, userName } } };
     try {
-      await addMessage(messageData, currentChannelId);
+      await dispatch(asyncMessagesActions.addMessage(messageData, currentChannelId));
       setSubmitting(false);
       resetForm();
     } catch (error) {
-      addError(error.message);
+      dispatch(errorsActions.addError(error.message));
     }
   };
 
@@ -44,7 +29,7 @@ const NewMessageForm = (props) => {
       return null;
     }
     return (
-      <Alert variant="danger" onClose={() => cleanError()} dismissible>
+      <Alert variant="danger" onClose={() => dispatch(errorsActions.cleanError())} dismissible>
         <Alert.Heading>{errors.message}</Alert.Heading>
         <p>
           Please, try do it later!
@@ -79,4 +64,4 @@ const NewMessageForm = (props) => {
   );
 };
 
-export default connect(mapStateToProps, actionCreators)(NewMessageForm);
+export default NewMessageForm;

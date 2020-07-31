@@ -7,21 +7,21 @@ import { actions as errorsActions } from './errors';
 
 const slice = createSlice({
   name: 'channels',
-  initialState: { currentChannelId: 1, channels: [] },
+  initialState: { currentChannelId: 1, channelsList: [] },
   reducers: {
     selectActiveChannel: (state, { payload: { id } }) => (
       { ...state, currentChannelId: id }
     ),
-    removeChannelSuccess: (state, { payload: { data: { id } } }) => {
-      _.remove(state.channels, (channel) => channel.id === id);
+    removeChannelSuccess: (state, { payload: { id } }) => {
+      _.remove(state.channelsList, (channel) => channel.id === id);
       state.currentChannelId = 1;
     },
-    renameChannelSuccess: (state, { payload: { data: { attributes } } }) => {
-      const renamedChannel = state.channels.find((channel) => channel.id === attributes.id);
-      renamedChannel.name = attributes.name;
+    renameChannelSuccess: (state, { payload }) => {
+      const renamedChannel = state.channelsList.find((channel) => channel.id === payload.id);
+      renamedChannel.name = payload.name;
     },
-    addChannelSuccess: (state, { payload: { data: { attributes } } }) => {
-      state.channels.push(attributes);
+    addChannelSuccess: (state, { payload }) => {
+      state.channelsList.push(payload);
     },
   },
 });

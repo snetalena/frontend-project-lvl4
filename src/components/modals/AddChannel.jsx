@@ -3,21 +3,25 @@ import {
   Modal, FormGroup, FormControl, Button,
 } from 'react-bootstrap';
 import { useFormik } from 'formik';
+import { useDispatch } from 'react-redux';
+import { asyncChannelsActions } from '../../slices';
 
 const AddChannel = (props) => {
-  const { modalProps: { addChannel, closeModal } } = props;
+  const dispatch = useDispatch();
+  const { closeModal } = props;
+
   const handleOnSubmit = (values, { setSubmitting, resetForm }) => {
-    addChannel(values);
+    dispatch(asyncChannelsActions.addChannel(values));
     setSubmitting(false);
     resetForm();
-    closeModal();
+    dispatch(closeModal());
   };
   const formik = useFormik({
     initialValues: { name: '' },
     onSubmit: handleOnSubmit,
   });
   return (
-    <Modal show onHide={closeModal} centered>
+    <Modal show onHide={() => dispatch(closeModal())} centered>
       <Modal.Header closeButton>
         <Modal.Title>Add new channel</Modal.Title>
       </Modal.Header>
@@ -36,7 +40,7 @@ const AddChannel = (props) => {
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={formik.handleSubmit} variant="outline-primary" type="submit">Save</Button>
-        <Button onClick={closeModal} variant="outline-secondary">Cancel</Button>
+        <Button onClick={() => dispatch(closeModal())} variant="outline-secondary">Cancel</Button>
       </Modal.Footer>
     </Modal>
   );
