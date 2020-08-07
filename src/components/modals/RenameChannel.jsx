@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import {
   Modal, FormGroup, FormControl, Button,
 } from 'react-bootstrap';
@@ -9,6 +9,10 @@ import { asyncChannelsActions } from '../../slices';
 const RenameChannel = (props) => {
   const modalData = useSelector((state) => state.modals.modalData);
   const dispatch = useDispatch();
+  const inputRenameChannelRef = useRef();
+  useEffect(() => {
+    inputRenameChannelRef.current.focus();
+  });
   const { closeModal } = props;
 
   const handleOnSubmit = (values, { setSubmitting, resetForm }) => {
@@ -31,6 +35,7 @@ const RenameChannel = (props) => {
           <FormGroup>
             <FormControl
               required
+              ref={inputRenameChannelRef}
               type="text"
               name="name"
               onChange={formik.handleChange}

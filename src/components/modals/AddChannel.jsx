@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import {
   Modal, FormGroup, FormControl, Button,
 } from 'react-bootstrap';
@@ -8,6 +8,10 @@ import { asyncChannelsActions } from '../../slices';
 
 const AddChannel = (props) => {
   const dispatch = useDispatch();
+  const inputAddChannelRef = useRef();
+  useEffect(() => {
+    inputAddChannelRef.current.focus();
+  });
   const { closeModal } = props;
 
   const handleOnSubmit = (values, { setSubmitting, resetForm }) => {
@@ -30,6 +34,7 @@ const AddChannel = (props) => {
           <FormGroup>
             <FormControl
               required
+              ref={inputAddChannelRef}
               type="text"
               name="name"
               onChange={formik.handleChange}

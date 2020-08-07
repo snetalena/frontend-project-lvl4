@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Formik } from 'formik';
 import _ from 'lodash';
@@ -12,6 +12,12 @@ const NewMessageForm = () => {
   const errors = useSelector((state) => state.errors);
 
   const dispatch = useDispatch();
+
+  const inputRef = useRef();
+
+  useEffect(() => {
+    inputRef.current.focus();
+  });
 
   const handlerOnSubmit = async (values, { resetForm, setSubmitting }) => {
     const messageData = { data: { attributes: { text: values.text, userName } } };
@@ -46,6 +52,7 @@ const NewMessageForm = () => {
           required
           type="text"
           name="text"
+          ref={inputRef}
           onChange={formikProps.handleChange}
           disabled={formikProps.isSubmitting}
           placeholder="Input a new message"
